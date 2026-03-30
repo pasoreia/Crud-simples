@@ -26,7 +26,7 @@ public class DaoUsuario {
         
         stmt.setString(1, usuario.getNome());
         stmt.setString(2, usuario.getEmail());
-        stmt.setInt(3, usuario.getSenha());
+        stmt.setString(3, usuario.getSenha());
         stmt.executeUpdate();
         stmt.close();
       
@@ -41,11 +41,11 @@ public class DaoUsuario {
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()){
-            Usuario u = new Usuario(
-             rs.getString("nome"),
-             rs.getString("email"),
-             rs.getInt("senha")
-        );
+            Usuario u = new Usuario();
+             u.setNome(rs.getString("nome"));
+             u.setEmail(rs.getString("email"));   
+             u.setSenha(rs.getString("senha"));
+                   
            
             lista.add(u);
         
@@ -74,10 +74,10 @@ public class DaoUsuario {
         stmt.close();
      }
 
-     public void atualizarSenha(int id, int novaSenha)throws SQLException{
+     public void atualizarSenha(int id, String novaSenha)throws SQLException{
         String sql = "UPDATE Postagem SET senha = ? WHERE id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1,novaSenha);
+        stmt.setString(1,novaSenha);
         stmt.setInt(2, id);
         stmt.executeUpdate();
         stmt.close();
@@ -96,6 +96,8 @@ public class DaoUsuario {
             {
                 stmt.executeUpdate(sql);
                 System.out.println("Tabela excluida com sucesso!!");
+
+                stmt.close();
                 
 
             }
