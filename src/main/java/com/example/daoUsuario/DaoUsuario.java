@@ -33,15 +33,16 @@ public class DaoUsuario {
     }
 
 
-    public List<Usuario> listar() throws SQLException{
+    public  List<Usuario> listar() throws SQLException{
 
         List<Usuario> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Postagem";
-        Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery(sql);
+        String sql = "SELECT id, nome, email, senha FROM Postagem";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = stmt.executeQuery();
 
         while (rs.next()){
             Usuario u = new Usuario();
+             u.setId(rs.getInt("id"));
              u.setNome(rs.getString("nome"));
              u.setEmail(rs.getString("email"));   
              u.setSenha(rs.getString("senha"));

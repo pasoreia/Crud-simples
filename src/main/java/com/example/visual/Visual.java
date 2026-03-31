@@ -3,12 +3,15 @@ package com.example.visual;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
@@ -48,7 +51,7 @@ public class Visual {
         JLabel senha = new JLabel("Senha: ");
         senha.setBounds(10,108, 150, 50);
         JLabel id = new JLabel("ID: ");
-        id.setBounds(10,160,150,50 );
+        id.setBounds(40,175,150,50 );
 
         //campos de texto  para inserir os dados 
         
@@ -59,7 +62,12 @@ public class Visual {
         JTextField campoSenha = new JTextField(50);
         campoSenha.setBounds(60,125,300,20);
         JTextField campoId = new JTextField(50);
-        campoId.setBounds(60, 190, 300 , 20);
+        campoId.setBounds(60, 190, 100 , 20);
+
+      
+
+
+
     
 
 
@@ -78,6 +86,7 @@ public class Visual {
         painel.add(botaoExcluir(usuario, campoId, janelaPrincipal));
         painel.add(campoId);
         painel.add(id);
+        painel.add(botaoListar(conn));
         
 
         //o que esta na janela principal
@@ -131,14 +140,66 @@ public class Visual {
             }
 
             JOptionPane.showMessageDialog(janelaPrincipal, "Usuário: " + usuario.getNome() + 
-                "Email: " + usuario.getEmail() + "ID: " + usuario.getId() + "Cadsatro excluido com sucesso!!");
+                "\nEmail: " + usuario.getEmail() + "\nID: " + usuario.getId() + "\nCadsatro excluido com sucesso!!");
 
        });
        return botaoExcluir;
     }
 
 
+    public static  JButton botaoListar( Connection conn){
 
+        JButton botaoListar = new JButton("Listar");
+        botaoListar.setBounds(135, 265, 130, 30);
+        botaoListar.addActionListener(e -> {
+            JFrame janelaListagem = new JFrame();
+            janelaListagem.setSize(400,400);
+            janelaListagem.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+           
+
+            try { 
+                DaoUsuario daoUsuario = new DaoUsuario(conn);
+                List<Usuario> usuarios = daoUsuario.listar();
+
+                String [] colunas= {"ID", "Nomes", "Email", "Senha"};
+                Object [] [] dados = new Object[usuarios.size()][4]; 
+
+                for (int i = 0; i < usuarios.size(); i++) {
+                    Usuario u = usuarios.get(i);
+                    dados[i][0] = u.getId();
+                    dados[i][1] = u.getNome();
+                    dados[i][2] = u.getEmail();
+                    dados[i][3] = u.getSenha();
+                    
+                }
+
+            JTable tabela = new JTable(dados, colunas);
+            JScrollPane scroll = new JScrollPane(tabela);
+
+
+            janelaListagem.add(scroll);
+            janelaListagem.setVisible(true);
+
+
+            } catch (SQLException e1) {
+                
+                e1.printStackTrace();
+                JOptionPane.showMessageDialog( janelaListagem, "Banco de dados não conectado");
+            }
+        
+
+
+            
+
+            
+           
+        });
+        return botaoListar;
+    }
+
+    
+       
 
     
 
